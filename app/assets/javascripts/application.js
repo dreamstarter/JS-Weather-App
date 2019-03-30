@@ -17,6 +17,7 @@
 window.addEventListener('load', ()=> {
   let long
   let lat
+  let alert = document.querySelector('.alert');
   let temperatureDescription = document.querySelector('.temperature-description');
   let temperatureDegree = document.querySelector('.temperature-degree');
   let locationTimezone = document.querySelector('.location-timezone');
@@ -29,6 +30,7 @@ window.addEventListener('load', ()=> {
       // console.log(position);
       long = position.coords.longitude;
       lat = position.coords.latitude;
+      temperatureSpan.textContent = "℉";
 
       const proxy = 'http://cors-anywhere.herokuapp.com/';
       const api = `${proxy}https://api.darksky.net/forecast/a488b826af858506e258957f3ebe1b47/${lat},${long}`;
@@ -38,7 +40,7 @@ window.addEventListener('load', ()=> {
           return apiResponse.json();
         })
         .then(data => {
-          console.log(data);
+          //console.log(data);
 
           const { temperature, summary, icon } = data.currently;
           
@@ -53,26 +55,31 @@ window.addEventListener('load', ()=> {
           //Set Icon
           setIcons(icon, document.querySelector('.icon'));
 
-          //Switch temperature measurement (Celsius/Farenheit)
+          //Switch temperature measurement (Celsius/Fahrenheit)
           temperatureSection.addEventListener('click', () => {
-            if(temperatureSpan.textContent === "F"){
-              temperatureSpan.textContent = "C";
+            if(temperatureSpan.textContent === "℉"){
+              temperatureSpan.textContent = "℃";
               temperatureDegree.textContent = Math.floor(celsius)
             }else{
-              temperatureSpan.textContent = "F";
+              temperatureSpan.textContent = "℉";
               temperatureDegree.textContent = Math.floor(temperature);
             }
           });
         }) 
     });
   }else{
-    h1.textContent = "Please allow your location to be used, in order to load your local weather."
-  }
+    alert.textContent = "Please allow your location to be used, in order to load your local weather.";
+  };
 
   function setIcons(icon, iconID){
-    const skycons = new Skycons({color: "whitesmoke"});
+    const skycons = new Skycons({color: "white"});
     const currentIcon = icon.replace(/-/g, "_").toUpperCase();
     skycons.play();
     return skycons.set(iconID, Skycons[currentIcon]);
-  }
+  };
+
+  function htmlEncode( html ) {
+    return document.createElement( 'a' ).appendChild( 
+      document.createTextNode( html ) ).parentNode.innerHTML;
+  };
 });
